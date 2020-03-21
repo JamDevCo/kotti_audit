@@ -27,6 +27,7 @@ tests_require = [
     'pytest-pep8',
     'mock',
     'webtest',
+    'kotti_bstable'
 ]
 
 
