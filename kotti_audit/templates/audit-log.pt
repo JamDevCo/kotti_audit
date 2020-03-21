@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="api.macro('kotti:templates/view/master.pt')">
+
+    <div metal:fill-slot="head-more"
+             class="content audit-log-default-view"
+             i18n:domain="kotti_audit">
+      <style>
+        #all-report-20{
+          padding-top: 20px;
+          padding-bottom: 20px;
+          background: white;
+        }
+        #default-report-holder .external-open{
+          position: absolute;
+          right: 20px;
+          top: 10px;
+        }
+      </style>
+     </div>
+
+  <article metal:fill-slot="content"
+           class="content audit-log-default-view"
+           i18n:domain="kotti_audit">
+
+    <div class="ibox">
+        <div class="ibox-content">
+          <div id="asset-holder"
+            tal:define="data_url request.resource_url(api.root, 'audit-api');
+                        data_search 'search={}'.format(request.params.get('search', '')) if 'search' in request.params else ''">
+            <h2>Audit Log</h2>
+
+            <div class="table-responsive">
+                <table id="custom-report-table" class="table"
+                    data-toggle="table"
+                    data-search="true"
+                    data-pagination="true"
+                    data-side-pagination="server"
+                    data-url="${data_url}?${data_search}"
+                    data-page-size="50"
+                    data-sort-name="modification_date"
+                    data-sort-order="asc">
+                    <thead>
+                        <tr>
+                            <th data-sortable="true" data-formatter="urlFormatter" data-field="title" >Title</th>
+                            <th data-sortable="true" data-field="context" >Context</th>
+                            <th data-sortable="true" data-field="id" >ID</th>
+                            <th data-field='creation_date'
+                                data-sorter="dateSorter"  data-sortable="true">
+                                Created
+                            </th>
+                            <th data-field="modification_date"
+                                data-sorter="dateSorter"  data-sortable="true">
+                                Modified
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+          </div>
+        </div>
+      </div>
+  </article>
+</html>
