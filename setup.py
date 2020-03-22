@@ -14,20 +14,20 @@ try:
 except IOError:
     CHANGES = ''
 
-version = '1.0.0'
+version = '1.0.1'
 
 install_requires = [
     'Kotti>=1.2.4',
     'kotti_tinymce',
-    'kotti-controlpanel>=1.0.9'
+    'kotti-controlpanel>=1.0.9',
+    'kotti_bstable'
 ]
 
 tests_require = [
     'pytest-cov',
     'pytest-pep8',
     'mock',
-    'webtest',
-    'kotti_bstable'
+    'webtest'
 ]
 
 

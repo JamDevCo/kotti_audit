@@ -30,7 +30,7 @@
     <div class="ibox">
         <div class="ibox-content">
           <div id="asset-holder"
-            tal:define="data_url request.resource_url(api.root, 'audit-api');
+            tal:define="data_url request.resource_url(context, 'audit-api');
                         data_search 'search={}'.format(request.params.get('search', '')) if 'search' in request.params else ''">
             <h2>Audit Log</h2>
 
@@ -39,16 +39,21 @@
                     data-toggle="table"
                     data-search="true"
                     data-pagination="true"
+                   data-show-columns="true"
+                   data-show-refresh="true"
+                   data-show-export="true"
+                   data-show-fullscreen="true"
                     data-side-pagination="server"
                     data-url="${data_url}?${data_search}"
                     data-page-size="50"
+                    data-id-field="id"
                     data-sort-name="modification_date"
                     data-sort-order="asc">
                     <thead>
                         <tr>
+                            <th data-sortable="true" data-field="id" >ID</th>
                             <th data-sortable="true" data-formatter="urlFormatter" data-field="title" >Title</th>
                             <th data-sortable="true" data-field="context" >Context</th>
-                            <th data-sortable="true" data-field="id" >ID</th>
                             <th data-field='creation_date'
                                 data-sorter="dateSorter"  data-sortable="true">
                                 Created

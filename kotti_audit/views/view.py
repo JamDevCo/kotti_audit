@@ -14,12 +14,11 @@ from kotti_audit.views import BaseView
 from kotti.resources import Content
 
 
-@view_defaults(permission='admin')
+@view_defaults(permission='edit', context=Content)
 class AuditLogViews(BaseView):
     """ Views for :class:`kotti_audit.resources.CustomContent` """
 
     @view_config(name='audit-log', permission='view',
-                 root_only=True,
                  renderer='kotti_audit:templates/audit-log.pt')
     def default_view(self):
         """ Default view for :class:`kotti_audit.resources.CustomContent`
@@ -39,13 +38,16 @@ class AuditLogViews(BaseView):
         offset = int(self.request.params.get("offset", 0))
         sort = self.request.params.get("sort", "creation_date")
         order = self.request.params.get("order", "desc")
-        parent_id = int(self.request.params.get("parent_id", 0))
+        parent_id = self.context.id if self.context.__parent__ else 0
         query = self.request.params.get("search", None)
 
         nodes = Content.query;
 
         if parent_id != 0:
-            nodes = nodes.filter_by(Content.parent_id == parent_id)
+            nodes = nodes.filter(
+                Content.path.ilike('{}%'.format(self.context.path)),
+                Content.id != self.context.id
+            )
 
         if query is not None:
             nodes = nodes.filter(Content.title.ilike("%{}%".format(query)))

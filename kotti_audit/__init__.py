@@ -8,10 +8,14 @@ Created on 2020-03-21
 from kotti.resources import File
 from pyramid.i18n import TranslationStringFactory
 from kotti.util import Link
+from kotti.resources import default_actions
+from kotti.resources import Content
+from kotti.views.site_setup import CONTROL_PANEL_LINKS as KOTTI_USER_NAV_LINKS
 from kotti_controlpanel import CONTROL_PANEL_LINKS as CPANEL_PAGE_LINKS
 
 _ = TranslationStringFactory('kotti_audit')
 
+default_actions.insert(0, Link('audit-log', title=_(u'Audit Log')))
 
 def kotti_configure(settings):
     """ Add a line like this to you .ini file::
@@ -28,6 +32,9 @@ def kotti_configure(settings):
     settings['pyramid.includes'] += ' kotti_audit'
     settings['kotti.alembic_dirs'] += ' kotti_audit:alembic'
     CPANEL_PAGE_LINKS.append(
+        Link('audit-log', title=_(u'Audit Log'))
+    )
+    KOTTI_USER_NAV_LINKS.append(
         Link('audit-log', title=_(u'Audit Log'))
     )
 

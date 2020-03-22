@@ -1,7 +1,23 @@
 kotti_audit
 ***********
 
-This is an extension to Kotti that allows to add foo to your site.
+Add an audit log to your Kotti website.
+
+Features
+===========
+- Content audit log for editors to find content based on creation or modification.
+- Each content node has an audit log that display all children of that node.
+
+Note, this package adds the ***Audit Log*** menu entry to the ***Actions*** menu.
+The Audit Log menu entry will take you the content respective Audit view, e.g.
+http://localhost/audit-log or http://localhost/example-content/audit-log
+
+Example
+=========
+
+.. image:: https://i.ibb.co/GpNHL55/Audit-Log-Welcome-to-DPIS-Online-DPIS-Online.png
+  :width: 100%
+  :alt: Audit Log for Kotti
 
 |pypi|_
 |downloads_month|_
