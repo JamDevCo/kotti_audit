@@ -8,6 +8,8 @@ on:
     branches: [ master, cicd ]
   pull_request:
     branches: [ master, cicd ]
+  release:
+    types: [published]
 
 jobs:
   build-n-test:
