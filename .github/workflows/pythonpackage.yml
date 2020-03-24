@@ -59,14 +59,19 @@ jobs:
         python -m pip install -U pip setuptools
         python -m pip install wheel --user
         python setup.py sdist bdist_wheel
+    - name: Echo Refs
+      run: |
+        echo "Current Branch: ${{ github.ref }}"
+        echo "Pull Source Branch: ${{ github.head_ref }}"
+        echo "Event Trigger Branch ${{ github.event.ref }}"
     - name: Publish distribution 📦 to Test PyPI
-      if: startsWith(github.event.ref, 'refs/tags')
+      if: success() && startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.test_pypi_password }}
         repository_url: https://test.pypi.org/legacy/
     - name: Publish distribution 📦 to PyPI
-      if: startsWith(github.event.ref, 'refs/tags')
+      if: success() && startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.pypi_password }}
