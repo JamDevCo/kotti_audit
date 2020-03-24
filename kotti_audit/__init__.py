@@ -11,7 +11,7 @@ from kotti.util import Link
 from kotti.resources import default_actions
 from kotti.resources import Content
 from kotti.views.site_setup import CONTROL_PANEL_LINKS as KOTTI_USER_NAV_LINKS
-from kotti_controlpanel import CONTROL_PANEL_LINKS as CPANEL_PAGE_LINKS
+
 
 _ = TranslationStringFactory('kotti_audit')
 
@@ -31,17 +31,22 @@ def kotti_configure(settings):
 
     settings['pyramid.includes'] += ' kotti_audit'
     settings['kotti.alembic_dirs'] += ' kotti_audit:alembic'
-    CPANEL_PAGE_LINKS.append(
-        Link('audit-log', title=_(u'Audit Log'))
-    )
+    try:
+        
+        from kotti_controlpanel import CONTROL_PANEL_LINKS as CPANEL_PAGE_LINKS
+        CPANEL_PAGE_LINKS.append(
+            Link('audit-log', title=_(u'Audit Log'))
+        )
+        if 'kotti_controlpanel.kotti_configure' not in settings['kotti.configurators']:
+            settings['kotti.configurators'] += '\nkotti_controlpanel.kotti_configure'
+            settings['kotti.base_includes'] += ' kotti_controlpanel'
+    except ImportError:
+        pass
+
     KOTTI_USER_NAV_LINKS.append(
         Link('audit-log', title=_(u'Audit Log'))
     )
     settings['kotti.fanstatic.view_needed'] += ' kotti_audit.fanstatic.css_and_js'
-
-    if 'kotti_controlpanel.kotti_configure' not in settings['kotti.configurators']:
-        settings['kotti.configurators'] += '\nkotti_controlpanel.kotti_configure'
-        settings['kotti.base_includes'] += ' kotti_controlpanel'
 
 
 def includeme(config):
