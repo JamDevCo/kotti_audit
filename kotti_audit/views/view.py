@@ -8,6 +8,7 @@ import json
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 from sqlalchemy import or_
+from sqlalchemy.orm import aliased
 
 from kotti_audit import _
 from kotti_audit import utils
@@ -40,7 +41,7 @@ class AuditLogViews(BaseView):
 
     @view_config(name="audit-api", permission="admin",
                  renderer="json")
-    def api_dropbox(self):
+    def audit_api(self):
         """ API view`
 
         :result: Dictionary needed to render the template.
@@ -83,19 +84,26 @@ class AuditLogViews(BaseView):
                 query = query.filter_by(type=filters['type'].lower())
             
             if 'parent' in filters:
+                parent_title = filters['parent']
+                
+                parent_ids = Content.query.filter(
+                    Content.title.ilike("%{}%".format(parent_title))
+                ).values('id')
+                
                 query = query.filter(
-                    Content.parent.title.ilike(
-                        "%{}%".format(filters['parent'])))
-
-        
-        if search:
-            # TODO: Add an `or` statement to find content with similar (like)
-            # title and parent title.
-            query = query.filter(
-                or_(
-                    Content.title.ilike("%{}%".format(search)),
-                    Content.type==search.lower()
+                    Content.parent_id.in_([r[0] for r in parent_ids])
                 )
+
+
+        if search:
+            
+            # Remvoe the current filters' value from the search text.
+            if filters:
+                for v in filters.values():
+                    search = search.replace(v, '')
+            search = search.strip()
+            query = query.filter(
+                Content.title.ilike("%{}%".format(search))
             )
 
         if order == 'asc':
@@ -109,17 +117,23 @@ class AuditLogViews(BaseView):
         if limit > 0:
             query = query.limit(limit)
 
+        # import pdb; pdb.set_trace()
         # build bootstrap table response.
-        query_json = [{
-            "title": f.title,
-            "parent": f.parent.title if f.parent is not None else '',
-            "path": f.path,
-            'type': f.type.title(),
-            "url": f.path,
-            "id": f.id,
-            "creation_date": f.creation_date.strftime("%A %d. %B %Y - %I:%M%p %z ") or '',
-            "modification_date": f.modification_date.strftime("%A %d. %B %Y - %I:%M%p %z ") or ''
-        } for f in query]
+        query_json = [
+            {
+                "title": f.title,
+                "parent": f.parent.title if f.parent is not None else '',
+                "path": f.path,
+                'type': f.type.title(),
+                "url": f.path,
+                "id": f.id,
+                "creation_date": f.creation_date.strftime(
+                    "%A %d. %B %Y - %I:%M%p %z ") or '',
+                "modification_date": f.modification_date.strftime(
+                    "%A %d. %B %Y - %I:%M%p %z ") or ''
+            }
+            for f in query
+        ]
         return {
             "rows": query_json,
             "total": total_query
