@@ -7,6 +7,8 @@ Features
 ===========
 - Content audit log for editors to find content based on creation or modification.
 - Each content node has an audit log that display all children of that node.
+- Content filtering and sorthing by title, content type, container title, modification_date and creation_date
+- Content search
 
 Note, this package adds the ***Audit Log*** menu entry to the ***Actions*** menu.
 The Audit Log menu entry will take you the content respective Audit view, e.g.
@@ -15,9 +17,10 @@ http://localhost/audit-log or http://localhost/example-content/audit-log
 Example
 =========
 
-.. image:: https://i.ibb.co/GpNHL55/Audit-Log-Welcome-to-DPIS-Online-DPIS-Online.png
+.. image:: https://user-images.githubusercontent.com/1830494/77401539-19d4c180-6d7b-11ea-88db-fb1e5be3cd4f.png
   :width: 100%
   :alt: Audit Log for Kotti
+
 
 |pypi|_
 |downloads_month|_
