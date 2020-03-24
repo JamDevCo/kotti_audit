@@ -47,19 +47,25 @@
                     data-url="${data_url}?${data_search}"
                     data-page-size="50"
                     data-id-field="id"
+                    data-filter-control="true"
                     data-sort-name="modification_date"
-                    data-sort-order="asc">
+                    data-sort-order="desc">
                     <thead>
                         <tr>
                             <th data-sortable="true" data-field="id" >ID</th>
-                            <th data-sortable="true" data-formatter="urlFormatter" data-field="title" >Title</th>
-                            <th data-sortable="true" data-field="context" >Context</th>
+                            <th data-sortable="true" data-filter-control="input" data-formatter="urlFormatter" data-field="title" >Title</th>
+                            <th data-sortable="true" data-filter-control="select" data-field="type" >Context</th>
+                            <th data-sortable="true" data-filter-control="select" data-field="parent" >Container</th>
                             <th data-field='creation_date'
-                                data-sorter="dateSorter"  data-sortable="true">
+                                data-sorter="dateSorter"  data-sortable="true"
+                                data-filter-control="datepicker"
+                                data-filter-datepicker-options='{"format": "yyyy-mm-dd"}'>
                                 Created
                             </th>
                             <th data-field="modification_date"
-                                data-sorter="dateSorter"  data-sortable="true">
+                                data-sorter="dateSorter"  data-sortable="true"
+                                data-filter-control="datepicker"
+                                data-filter-datepicker-options='{"format": "yyyy-mm-dd"}'>
                                 Modified
                             </th>
                         </tr>

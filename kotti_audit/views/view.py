@@ -4,11 +4,13 @@
 Created on 2020-03-21
 :author: Oshane Bailey (b4.oshany@gmail.com)
 """
-
+import json
 from pyramid.view import view_config
 from pyramid.view import view_defaults
+from sqlalchemy import or_
 
 from kotti_audit import _
+from kotti_audit import utils
 from kotti_audit.fanstatic import css_and_js
 from kotti_audit.views import BaseView
 from kotti.resources import Content
@@ -21,58 +23,97 @@ class AuditLogViews(BaseView):
     @view_config(name='audit-log', permission='view',
                  renderer='kotti_audit:templates/audit-log.pt')
     def default_view(self):
-        """ Default view for :class:`kotti_audit.resources.CustomContent`
+        """ Default view`
 
         :result: Dictionary needed to render the template.
         :rtype: dict
         """
 
-        return {
-            'foo': _(u'bar'),
-        }
+        return {}
 
     @view_config(name="audit-api", permission="admin",
                  renderer="json")
     def api_dropbox(self):
+        """ API view`
+
+        :result: Dictionary needed to render the template.
+        :rtype: dict
+        """
         limit = int(self.request.params.get("limit", 50))
         offset = int(self.request.params.get("offset", 0))
-        sort = self.request.params.get("sort", "creation_date")
+        sort = self.request.params.get("sort", "modification_date")
         order = self.request.params.get("order", "desc")
+        filters = self.request.params.get("filter", None)
+        search = self.request.params.get("search", None)
+
+        query = Content.query;
+
+        # Use the current context as the base location of the search,
+        # otherwise, use root as the base location if no parent is found.
         parent_id = self.context.id if self.context.__parent__ else 0
-        query = self.request.params.get("search", None)
-
-        nodes = Content.query;
-
         if parent_id != 0:
-            nodes = nodes.filter(
+            query = query.filter(
                 Content.path.ilike('{}%'.format(self.context.path)),
                 Content.id != self.context.id
             )
 
-        if query is not None:
-            nodes = nodes.filter(Content.title.ilike("%{}%".format(query)))
+        if filters is not None:
+            filters = json.loads(filters)
+        
+            if 'creation_date' in filters:
+                creation_date = filters['creation_date']
+                query = utils.date_query(query, 'creation_date', creation_date)
+        
+            if 'modification_date' in filters:
+                modification_date = filters['modification_date']
+                query = utils.date_query(query, 'modification_date', modification_date)
+            
+            if 'title' in filters:
+                query = query.filter(
+                    Content.title.ilike("%{}%".format(filters['title'])))
+            
+            if 'type' in filters:
+                query = query.filter_by(type=filters['type'].lower())
+            
+            if 'parent' in filters:
+                query = query.filter(
+                    Content.parent.title.ilike(
+                        "%{}%".format(filters['parent'])))
+
+        
+        if search:
+            # TODO: Add an `or` statement to find content with similar (like)
+            # title and parent title.
+            query = query.filter(
+                or_(
+                    Content.title.ilike("%{}%".format(search)),
+                    Content.type==search.lower()
+                )
+            )
 
         if order == 'asc':
-            nodes = nodes.order_by(Content.__dict__.get(sort).asc())
+            query = query.order_by(Content.__dict__.get(sort).asc())
         else:
-            nodes = nodes.order_by(Content.__dict__.get(sort).desc())
+            query = query.order_by(Content.__dict__.get(sort).desc())
 
-        total_nodes = nodes.count()
+        total_query = query.count()
         if offset > 0:
-            nodes = nodes.offset(offset)
+            query = query.offset(offset)
         if limit > 0:
-            nodes = nodes.limit(limit)
+            query = query.limit(limit)
 
-        nodes_json = [{
+        # build bootstrap table response.
+        query_json = [{
             "title": f.title,
-            "context": f.parent.title if f.parent is not None else '',
+            "parent": f.parent.title if f.parent is not None else '',
             "path": f.path,
+            'type': f.type.title(),
             "url": f.path,
             "id": f.id,
             "creation_date": f.creation_date.strftime("%A %d. %B %Y - %I:%M%p %z ") or '',
             "modification_date": f.modification_date.strftime("%A %d. %B %Y - %I:%M%p %z ") or ''
-        } for f in nodes]
+        } for f in query]
         return {
-            "rows": nodes_json,
-            "total": total_nodes
+            "rows": query_json,
+            "total": total_query
         }

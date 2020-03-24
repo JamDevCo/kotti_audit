@@ -37,6 +37,7 @@ def kotti_configure(settings):
     KOTTI_USER_NAV_LINKS.append(
         Link('audit-log', title=_(u'Audit Log'))
     )
+    settings['kotti.fanstatic.view_needed'] += ' kotti_audit.fanstatic.css_and_js'
 
     if 'kotti_controlpanel.kotti_configure' not in settings['kotti.configurators']:
         settings['kotti.configurators'] += '\nkotti_controlpanel.kotti_configure'
