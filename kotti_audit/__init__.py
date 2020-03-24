@@ -16,6 +16,9 @@ from kotti.views.site_setup import CONTROL_PANEL_LINKS as KOTTI_USER_NAV_LINKS
 _ = TranslationStringFactory('kotti_audit')
 
 default_actions.insert(0, Link('audit-log', title=_(u'Audit Log')))
+KOTTI_USER_NAV_LINKS.append(
+    Link('audit-log', title=_(u'Audit Log'))
+)
 
 def kotti_configure(settings):
     """ Add a line like this to you .ini file::
@@ -37,16 +40,20 @@ def kotti_configure(settings):
         CPANEL_PAGE_LINKS.append(
             Link('audit-log', title=_(u'Audit Log'))
         )
-        if 'kotti_controlpanel.kotti_configure' not in settings['kotti.configurators']:
-            settings['kotti.configurators'] += '\nkotti_controlpanel.kotti_configure'
-            settings['kotti.base_includes'] += ' kotti_controlpanel'
+        if 'kotti_controlpanel.kotti_configure' not in settings[
+            'kotti.configurators']:
+            settings['kotti.configurators'] += (
+                '\nkotti_controlpanel.kotti_configure'
+            )
+            settings['kotti.base_includes'] += (
+                ' kotti_controlpanel'
+            )
     except ImportError:
         pass
 
-    KOTTI_USER_NAV_LINKS.append(
-        Link('audit-log', title=_(u'Audit Log'))
+    settings['kotti.fanstatic.view_needed'] += (
+        ' kotti_audit.fanstatic.css_and_js'
     )
-    settings['kotti.fanstatic.view_needed'] += ' kotti_audit.fanstatic.css_and_js'
 
 
 def includeme(config):

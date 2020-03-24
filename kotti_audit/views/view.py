@@ -28,6 +28,7 @@ class AuditLogViews(BaseView):
         :result: Dictionary needed to render the template.
         :rtype: dict
         """
+        css_and_js.need()
 
         return {}
 
