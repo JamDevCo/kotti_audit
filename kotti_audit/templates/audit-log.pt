@@ -54,7 +54,9 @@
                         <tr>
                             <th data-sortable="true" data-field="id" >ID</th>
                             <th data-sortable="true" data-filter-control="input" data-formatter="urlFormatter" data-field="title" >Title</th>
-                            <th data-sortable="true" data-filter-control="select" data-field="type" >Context</th>
+                            <th data-sortable="true" data-filter-control="select"
+                                data-field="type"
+                                data-filter-data='json:${type_filters}'>Content Type</th>
                             <th data-sortable="true" data-filter-control="select" data-field="parent" >Container</th>
                             <th data-field='creation_date'
                                 data-sorter="dateSorter"  data-sortable="true"

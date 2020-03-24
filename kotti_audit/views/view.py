@@ -29,8 +29,14 @@ class AuditLogViews(BaseView):
         :rtype: dict
         """
         css_and_js.need()
+        
+        content_types = Content.query.distinct(
+            Content.type).with_entities(Content.type).all();
 
-        return {}
+        return {
+            'type_filters': json.dumps(
+                {t.type: t.type.title() for t in content_types})
+        }
 
     @view_config(name="audit-api", permission="admin",
                  renderer="json")
