@@ -14,7 +14,7 @@ try:
 except IOError:
     CHANGES = ''
 
-version = '1.1.4'
+version = '1.1.4dev1'
 
 install_requires = [
     'Kotti>=1.2.4',
